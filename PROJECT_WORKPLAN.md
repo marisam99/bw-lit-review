@@ -6,7 +6,7 @@
 
 **Target Users:** Project Managers and Support staff conducting desk research who need quick understanding of existing research literature.
 
-**Current Status:** Phase 1 (Infrastructure) complete
+**Current Status:** Phase 2 (Core Extraction Functions) complete
 
 ---
 
@@ -33,10 +33,10 @@
 
 ---
 
-## Phase 2: Core Extraction Functions
+## Phase 2: Core Extraction Functions ✅ COMPLETE
 
-**Status:** Not Started
-**Estimated Duration:** 2-3 development sessions
+**Status:** Completed
+**Completion Date:** November 17, 2025
 **Dependencies:** Phase 1 complete
 
 ### Objectives:
@@ -45,40 +45,54 @@ Build the core functions that handle single PDF extraction, API communication, a
 ### Tasks:
 
 #### 2.1: API Connection and Authentication
-- [ ] Create function to load and validate API key from .env file
-- [ ] Implement error handling for missing/invalid API credentials
-- [ ] Test basic connection to OpenAI API using ellmer package
+- [x] Create function to load and validate API key from .env file
+- [x] Implement error handling for missing/invalid API credentials
+- [x] Test basic connection to OpenAI API using ellmer package
 
 #### 2.2: Single PDF Extraction Function
-- [ ] Build `extract_pdf_metadata()` function that:
+- [x] Build `extract_pdf_metadata()` function that:
   - Accepts a single PDF file path
   - Validates file exists and is readable
   - Constructs extraction prompt based on requested metadata fields
   - Uploads PDF directly to OpenAI API using ellmer's file upload capability
   - Sends request using GPT-5.1 with configured parameters
   - Returns API response
-- [ ] Add file size validation with warning for files > 20MB
-- [ ] Implement timeout handling (120 seconds default)
+- [x] Add file size validation with warning for files > 20MB
+- [x] Implement timeout handling (120 seconds default)
 
 #### 2.3: Response Parsing and Validation
-- [ ] Create `parse_extraction_response()` function that:
+- [x] Create `parse_extraction_response()` function that:
   - Parses JSON response from API
   - Validates all requested fields are present
   - Handles null/missing values appropriately
   - Returns structured data frame row
-- [ ] Add error handling for malformed JSON responses
-- [ ] Implement fallback logic for partial extraction failures
+- [x] Add error handling for malformed JSON responses
+- [x] Implement fallback logic for partial extraction failures
 
 #### 2.4: Single-File Testing
-- [ ] Test with sample PDF in repository
-- [ ] Verify all metadata fields extract correctly
-- [ ] Validate JSON parsing and data frame output
-- [ ] Document any edge cases or limitations discovered
+- [x] Test with sample PDF in repository
+- [x] Verify all metadata fields extract correctly
+- [x] Validate JSON parsing and data frame output
+- [x] Document any edge cases or limitations discovered
 
-### Deliverables:
-- `/R/extract_metadata.R` - Core extraction functions
-- Test results from sample PDF extraction
-- Notes on any API limitations or gotchas
+### Completed Deliverables:
+- `/R/extract_metadata.R` - Core extraction functions with:
+  - `load_api_key()` - API authentication with validation
+  - `validate_pdf_file()` - File validation with size warnings
+  - `build_extraction_prompt()` - Dynamic prompt construction
+  - `parse_extraction_response()` - JSON parsing with error handling
+  - `extract_pdf_metadata()` - Main extraction orchestration function
+- `/tests/test_extract_metadata.R` - Comprehensive test script
+- `/tests/TESTING_NOTES.md` - Detailed testing documentation and expected behaviors
+
+### Implementation Notes:
+- All functions follow tidyverse style guide with |> pipes
+- Error messages use color-coded emojis (❌ errors, ⚠️ warnings, ✅ success)
+- Robust parameter validation prevents API calls with invalid inputs
+- File size warning threshold set at 20MB
+- Timeout set to 120 seconds for large PDF processing
+- Response parsing handles NULL values and missing fields gracefully
+- Functions designed for easy integration into batch processing (Phase 3)
 
 ---
 
@@ -353,7 +367,7 @@ The project will be considered complete when:
 ## Timeline Estimate
 
 - **Phase 1:** ✅ Complete (Nov 17, 2025)
-- **Phase 2:** 2-3 sessions (~1 week)
+- **Phase 2:** ✅ Complete (Nov 17, 2025)
 - **Phase 3:** 2-3 sessions (~1 week)
 - **Phase 4:** 1-2 sessions (~3-5 days)
 - **Phase 5:** 2-3 sessions (~1 week)
@@ -369,4 +383,5 @@ The project will be considered complete when:
 |------|-------|-------------------|
 | 2025-11-17 | Phase 1 | Initial infrastructure setup completed |
 | 2025-11-17 | Planning | Project workplan created |
+| 2025-11-17 | Phase 2 | Core extraction functions implemented with API auth, file validation, prompt building, and response parsing |
 
