@@ -9,10 +9,15 @@
 # OpenAI API Configuration -------------------------------------------------
 
 # Model to use for extraction (must be vision-capable for direct PDF upload)
-OPENAI_MODEL <- "o3-mini"  # Options: "o3-mini" (cost-effective), "gpt-4o" (balanced), "o1" (highest accuracy)
+OPENAI_MODEL <- "gpt-5.1"  # Latest flagship model in GPT-5 family
+# Other options: "gpt-5" (previous flagship), "gpt-5-mini" (cost-optimized), "gpt-5-nano" (high-throughput)
+# NOTE: GPT-5.1 uses the Responses API (not Chat Completions API)
+
+# GPT-5.1 specific parameters
+REASONING_EFFORT <- "none"  # Options: "none" (fastest), "low", "medium", "high"
+VERBOSITY_LEVEL <- "medium"  # Options: "low", "medium", "high"
 
 # API parameters
-API_TEMPERATURE <- 0.3  # Lower = more consistent, higher = more creative
 API_MAX_TOKENS <- 1500  # Maximum tokens in response
 API_TIMEOUT_SECONDS <- 120  # Request timeout (increased for large PDFs)
 
