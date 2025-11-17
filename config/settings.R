@@ -9,7 +9,7 @@
 # OpenAI API Configuration -------------------------------------------------
 
 # Model to use for extraction (must be vision-capable for direct PDF upload)
-OPENAI_MODEL <- "gpt-4o-mini"  # Cost-effective option; use "gpt-4o" for higher accuracy
+OPENAI_MODEL <- "o3-mini"  # Options: "o3-mini" (cost-effective), "gpt-4o" (balanced), "o1" (highest accuracy)
 
 # API parameters
 API_TEMPERATURE <- 0.3  # Lower = more consistent, higher = more creative
