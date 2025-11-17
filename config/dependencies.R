@@ -9,11 +9,8 @@
 library(tidyverse)  # Includes dplyr, readr, purrr, etc.
 
 # API and JSON handling
-library(httr2)      # Modern HTTP client for API calls
+library(ellmer)     # LLM API interface with file upload support
 library(jsonlite)   # JSON parsing
-
-# PDF processing
-library(pdftools)   # Extract text from PDF files
 
 # Excel output
 library(writexl)    # Write Excel files

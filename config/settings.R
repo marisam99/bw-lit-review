@@ -8,13 +8,24 @@
 
 # OpenAI API Configuration -------------------------------------------------
 
-# Model to use for extraction
-OPENAI_MODEL <- "gpt-4o-mini"
+# Model to use for extraction (must be vision-capable for direct PDF upload)
+OPENAI_MODEL <- "gpt-4o-mini"  # Cost-effective option; use "gpt-4o" for higher accuracy
 
 # API parameters
 API_TEMPERATURE <- 0.3  # Lower = more consistent, higher = more creative
 API_MAX_TOKENS <- 1500  # Maximum tokens in response
-API_TIMEOUT_SECONDS <- 60  # Request timeout
+API_TIMEOUT_SECONDS <- 120  # Request timeout (increased for large PDFs)
+
+# Batch Processing Configuration -------------------------------------------
+
+# Delay between API requests (in seconds) to avoid rate limits
+BATCH_DELAY_SECONDS <- 0.5
+
+# Number of retry attempts for failed API calls
+MAX_RETRY_ATTEMPTS <- 3
+
+# File size warning threshold (in MB)
+FILE_SIZE_WARNING_MB <- 20
 
 # Metadata Field Definitions -----------------------------------------------
 
@@ -36,13 +47,15 @@ DEFAULT_FIELDS <- c("title", "author", "year", "state", "key_findings")
 SYSTEM_PROMPT <- "You are a research assistant specializing in extracting metadata from academic and policy documents. Extract the requested information accurately and concisely."
 
 # Base prompt template (will be customized per document)
-EXTRACTION_PROMPT_TEMPLATE <- "Extract the following metadata from this document:
+EXTRACTION_PROMPT_TEMPLATE <- "Extract the following metadata from the uploaded PDF document:
 {field_descriptions}
 
 Provide your response as a valid JSON object with these exact keys: {field_names}
 
-Document text:
-{document_text}"
+Important notes:
+- Read the entire document, including any tables, charts, or figures
+- If a field is not found or not applicable, use null
+- For the key_findings field, synthesize information from throughout the document"
 
 # Output Configuration -----------------------------------------------------
 
