@@ -9,12 +9,12 @@
 # Setup ------------------------------------------------------------------------
 
 # Load dependencies and functions
-source(here("R/extract_metadata.R"))
+source(here("R/MAIN_summarize_literature.R"))
 
 # Test 1: File Validation ------------------------------------------------------
 
 # Test with existing PDF
-test_file <- "Using GPT-5.1 - OpenAI API.pdf"
+test_file <- here("tests","test_samples","Abott_2020.pdf")
 
 tryCatch({
   result <- validate_pdf_file(test_file)
@@ -36,7 +36,7 @@ tryCatch({
 tryCatch({
   prompt <- build_extraction_prompt()
   message("✅ Prompt built successfully")
-  message("\nPrompt preview (first 200 chars):")
+  message("\nPrompt preview (first 1000 chars):")
   message(substr(prompt, 1, 1000))
   message("...\n")
 }, error = function(e) {
@@ -45,7 +45,7 @@ tryCatch({
 
 # Test with custom fields
 tryCatch({
-  prompt <- build_extraction_prompt(fields = c("title", "author", "year"))
+  prompt <- build_extraction_prompt(fields = c("title", "authors", "year"))
   message("✅ Custom prompt built successfully\n")
   message("\nPrompt preview (first 200 chars):")
   message(substr(prompt, 1, 1000))
@@ -67,7 +67,8 @@ tryCatch({
 # Create mock response (simulating API response)
 mock_json <- '{
   "title": "Using GPT-5.1 - OpenAI API Documentation",
-  "author": "OpenAI",
+  "authors": "John Doe",
+  "organization": "OpenAI",
   "year": "2024",
   "state": null,
   "key_findings": "GPT-5.1 introduces enhanced reasoning capabilities and improved API features for developers."

@@ -45,7 +45,7 @@ METADATA_FIELDS <- list(
 )
 
 # Default fields to extract (users can override this)
-DEFAULT_FIELDS <- c("title", "author", "year", "state", "key_findings")
+DEFAULT_FIELDS <- c("title", "authors", "year", "state", "key_findings")
 
 # Prompt Template ----------------------------------------------------------
 
@@ -60,7 +60,7 @@ Provide your response as a valid JSON object with these exact keys: {field_names
 
 Important notes:
 - Read the entire document, including any tables, charts, or figures
-- If a field is not found or not applicable, use "N/A"
+- If a field is not found or not applicable, use 'N/A'
 - For the key_findings field, synthesize information from throughout the document"
 
 # Output Configuration -----------------------------------------------------

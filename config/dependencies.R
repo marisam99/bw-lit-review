@@ -44,3 +44,34 @@ library(ellmer)
 library(jsonlite)
 library(writexl)
 library(dotenv)
+
+# API KEY Check ----------------------------------------------------------------
+
+#' Load and validate OpenAI API key from environment
+#'
+#' Loads .env file and validates that OPENAI_API_KEY is present and non-empty.
+#' @return Character string with API key, or stops with error if not found
+load_api_key <- function() {
+  # Load .env file if it exists
+  env_path <- here(".env")
+  if (file.exists(env_path)) {
+    load_dot_env(env_path)
+  } else {
+    stop("❌ .env file not found. Please create one based on .env.example and add your OPENAI_API_KEY")
+  }
+
+  # Get API key from environment
+  api_key <- Sys.getenv("OPENAI_API_KEY")
+
+  # Validate API key exists and is not empty
+  if (api_key == "" || is.null(api_key)) {
+    stop("❌ OPENAI_API_KEY not found in .env file. Please add your OpenAI API key")
+  }
+
+  # Basic format validation (OpenAI keys typically start with "sk-")
+  if (!grepl("^sk-", api_key)) {
+    warning("⚠️  API key format looks unusual. OpenAI keys typically start with 'sk-'")
+  }
+
+  return(api_key)
+}

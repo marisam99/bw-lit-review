@@ -1,46 +1,10 @@
 # ==============================================================================
-# Title:        Extract Metadata
-# Description:  Main extraction functions for processing PDF files through the
-#               OpenAI API to extract bibliographic metadata and key findings.
-# Output:       Data frame with one row per PDF containing extracted metadata
+# Title:        Build Prompts
+# Description:  Validate input (PDF) and combine with system and user prompts
+# Output:       Character string with entire prompt to be sent to AI model
 # ==============================================================================
 
-# Configs ----------------------------------------------------------------------
-
-source(here("config/dependencies.R"))
-source(here("config/settings.R"))
-
 # Helper Functions -------------------------------------------------------------
-
-#' Load and validate OpenAI API key from environment
-#'
-#' Loads .env file and validates that OPENAI_API_KEY is present and non-empty.
-#' @return Character string with API key, or stops with error if not found
-load_api_key <- function() {
-  # Load .env file if it exists
-  env_path <- here(".env")
-  if (file.exists(env_path)) {
-    load_dot_env(env_path)
-  } else {
-    stop("❌ .env file not found. Please create one based on .env.example and add your OPENAI_API_KEY")
-  }
-
-  # Get API key from environment
-  api_key <- Sys.getenv("OPENAI_API_KEY")
-
-  # Validate API key exists and is not empty
-  if (api_key == "" || is.null(api_key)) {
-    stop("❌ OPENAI_API_KEY not found in .env file. Please add your OpenAI API key")
-  }
-
-  # Basic format validation (OpenAI keys typically start with "sk-")
-  if (!grepl("^sk-", api_key)) {
-    warning("⚠️  API key format looks unusual. OpenAI keys typically start with 'sk-'")
-  }
-
-  return(api_key)
-}
-
 
 #' Validate that a PDF file exists and is readable
 #'
