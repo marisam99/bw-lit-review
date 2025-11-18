@@ -8,10 +8,24 @@
 
 # Setup ------------------------------------------------------------------------
 
-# Load dependencies and functions
-source(here("R/MAIN_summarize_literature.R"))
+# Load dependencies and constants
+source(here("config/dependencies"))
+source(here("config/settings.R"))
 
-# Test 1: File Validation ------------------------------------------------------
+# Test 1: API Key Loading ------------------------------------------------------
+
+tryCatch({
+  api_key <- load_api_key()
+  message("✅ API key loaded successfully")
+  message(paste0("   Key starts with: ", substr(api_key, 1, 3), "...\n"))
+}, error = function(e) {
+  message(paste0("⚠️  Expected error (no .env file): ", e$message, "\n"))
+  message("   To enable API testing, create .env file with OPENAI_API_KEY\n")
+})
+
+# Test 2: File Validation ------------------------------------------------------
+
+source(here("R/build_prompt.R"))
 
 # Test with existing PDF
 test_file <- here("tests","test_samples","Abott_2020.pdf")
@@ -31,7 +45,7 @@ tryCatch({
   message(paste0("✅ Correctly caught error: ", e$message, "\n"))
 })
 
-# Test 2: Prompt Building ------------------------------------------------------
+# Test 3: Prompt Building ------------------------------------------------------
 
 tryCatch({
   prompt <- build_extraction_prompt()
@@ -47,7 +61,7 @@ tryCatch({
 tryCatch({
   prompt <- build_extraction_prompt(fields = c("title", "authors", "year"))
   message("✅ Custom prompt built successfully\n")
-  message("\nPrompt preview (first 200 chars):")
+  message("\nPrompt preview (first 1000 chars):")
   message(substr(prompt, 1, 1000))
   message("...\n")
 }, error = function(e) {
@@ -62,7 +76,9 @@ tryCatch({
   message(paste0("✅ Correctly caught error: ", e$message, "\n"))
 })
 
-# Test 3: Response Parsing -----------------------------------------------------
+# Test 4: Response Parsing -----------------------------------------------------
+
+source(here("R/process_response.R"))
 
 # Create mock response (simulating API response)
 mock_json <- '{
@@ -91,47 +107,3 @@ tryCatch({
 }, error = function(e) {
   message(paste0("✅ Correctly caught error: ", e$message, "\n"))
 })
-
-# Test 4: API Key Loading ------------------------------------------------------
-
-tryCatch({
-  api_key <- load_api_key()
-  message("✅ API key loaded successfully")
-  message(paste0("   Key starts with: ", substr(api_key, 1, 3), "...\n"))
-}, error = function(e) {
-  message(paste0("⚠️  Expected error (no .env file): ", e$message, "\n"))
-  message("   To enable API testing, create .env file with OPENAI_API_KEY\n")
-})
-
-# Test 5: Full Extraction (requires .env) --------------------------------------
-
-if (file.exists(here(".env"))) {
-  tryCatch({
-    result <- extract_pdf_metadata(test_file)
-    message("✅ Full extraction successful")
-    message("\nExtracted metadata:")
-    print(result)
-    message("")
-  }, error = function(e) {
-    message(paste0("❌ Extraction failed: ", e$message, "\n"))
-  })
-} else {
-  message("⚠️  Skipping full extraction test - .env file not found")
-}
-
-# Summary ----------------------------------------------------------------------
-
-message("\n========================================")
-message("TEST SUMMARY")
-message("========================================\n")
-message("✅ File validation functions work correctly")
-message("✅ Prompt building functions work correctly")
-message("✅ Response parsing functions work correctly")
-message("✅ API key loading validates .env file properly")
-message("")
-if (file.exists(here(".env"))) {
-  message("✅ Ready for full API testing")
-} else {
-  message("⚠️  Create .env file to enable full API testing")
-}
-message("")
