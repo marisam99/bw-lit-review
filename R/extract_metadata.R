@@ -161,11 +161,16 @@ parse_extraction_response <- function(response, expected_fields = DEFAULT_FIELDS
 #' Main extraction function that orchestrates the entire process: validates file,
 #' loads API key, uploads PDF to OpenAI, sends extraction request, and returns
 #' parsed metadata.
-#' @param pdf_path Path to PDF file to process
+#' @param pdf_path Path to PDF file to process. If NULL, opens file chooser dialog.
 #' @param fields Character vector of metadata fields to extract (defaults to DEFAULT_FIELDS)
 #' @return Data frame with one row containing extracted metadata
 #' @export
-extract_pdf_metadata <- function(pdf_path, fields = DEFAULT_FIELDS) {
+extract_pdf_metadata <- function(pdf_path = NULL, fields = DEFAULT_FIELDS) {
+  # If no path provided, use file chooser
+  if (is.null(pdf_path)) {
+    pdf_path <- file.choose()
+  }
+
   # Validate PDF file
   validate_pdf_file(pdf_path)
 
