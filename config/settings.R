@@ -38,7 +38,7 @@ FILE_SIZE_WARNING_MB <- 20
 METADATA_FIELDS <- list(
   title = "The full title of the document",
   authors = "Primary author(s)",
-  organization = "Publishing organization"
+  organization = "Publishing organization",
   year = "Publication year",
   state = "U.S. state(s) mentioned or relevant to the research (if applicable)",
   key_findings = "A 2-3 sentence summary of the main findings or conclusions"
