@@ -195,8 +195,9 @@ extract_pdf_metadata <- function(pdf_path = NULL, fields = DEFAULT_FIELDS) {
     )
 
     # Upload PDF and send request
+    # Use content_pdf_file() to encode the PDF for chat input
     result <- chat$chat(
-      pdf_path,
+      content_pdf_file(pdf_path),
       prompt
     )
 
