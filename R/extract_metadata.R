@@ -188,7 +188,6 @@ extract_pdf_metadata <- function(pdf_path = NULL, fields = DEFAULT_FIELDS) {
   # Make API request using ellmer
   response <- tryCatch({
     # Create chat with GPT-5.1 using ellmer
-    # According to settings, GPT-5.1 uses Responses API with specific parameters
     chat <- chat_openai(
       model = OPENAI_MODEL,
       api_key = api_key,
@@ -196,21 +195,9 @@ extract_pdf_metadata <- function(pdf_path = NULL, fields = DEFAULT_FIELDS) {
     )
 
     # Upload PDF and send request
-    # ellmer supports file uploads via the turns() function with type = "file"
     result <- chat$chat(
-      turns = list(
-        turn(
-          role = "user",
-          content = list(
-            content_file(pdf_path, type = "pdf"),
-            prompt
-          )
-        )
-      ),
-      max_tokens = API_MAX_TOKENS,
-      reasoning_effort = REASONING_EFFORT,
-      verbosity = VERBOSITY_LEVEL,
-      timeout = API_TIMEOUT_SECONDS
+      pdf_path,
+      prompt
     )
 
     result
