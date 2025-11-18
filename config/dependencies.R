@@ -1,22 +1,46 @@
 # ==============================================================================
 # Title:        Dependencies
 # Description:  Centralized package loading for the PDF metadata extraction tool.
-#               Load this file at the start of any script that uses these packages.
+#               Checks for required packages and prompts for installation if needed.
 # Output:       None (loads packages into environment)
 # ==============================================================================
 
-# Core data manipulation
-library(tidyverse)  # Includes dplyr, readr, purrr, etc.
+# Required Packages ------------------------------------------------------------
 
-# Path management
-library(here)       # Project-relative paths
+required_packages <- c(
+  "tidyverse",  # Core data manipulation (includes dplyr, readr, purrr, etc.)
+  "here",       # Project-relative paths
+  "ellmer",     # LLM API interface with file upload support
+  "jsonlite",   # JSON parsing
+  "writexl",    # Write Excel files
+  "dotenv"      # Load API keys from .env file
+)
 
-# API and JSON handling
-library(ellmer)     # LLM API interface with file upload support
-library(jsonlite)   # JSON parsing
+# Check for Missing Packages ---------------------------------------------------
 
-# Excel output
-library(writexl)    # Write Excel files
+missing_packages <- required_packages[!required_packages %in% installed.packages()[, "Package"]]
 
-# Environment variables
-library(dotenv)     # Load API keys from .env file
+if (length(missing_packages) > 0) {
+  message("❌ Missing required packages:\n")
+  message(paste("  -", missing_packages, collapse = "\n"))
+  message("\n")
+
+  response <- readline(prompt = "Install missing packages now? (y/n): ")
+
+  if (tolower(response) == "y") {
+    message("\n📦 Installing packages...\n")
+    install.packages(missing_packages)
+    message("\n✅ Installation complete!\n")
+  } else {
+    stop("❌ Cannot proceed without required packages. Please install them manually using:\n   install.packages(c('", paste(missing_packages, collapse = "', '"), "'))")
+  }
+}
+
+# Load Packages ----------------------------------------------------------------
+
+library(tidyverse)
+library(here)
+library(ellmer)
+library(jsonlite)
+library(writexl)
+library(dotenv)
