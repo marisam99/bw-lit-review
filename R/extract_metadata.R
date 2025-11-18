@@ -7,8 +7,8 @@
 
 # Configs ----------------------------------------------------------------------
 
-source(here::here("config/dependencies.R"))
-source(here::here("config/settings.R"))
+source(here("config/dependencies.R"))
+source(here("config/settings.R"))
 
 # Helper Functions -------------------------------------------------------------
 
@@ -18,7 +18,7 @@ source(here::here("config/settings.R"))
 #' @return Character string with API key, or stops with error if not found
 load_api_key <- function() {
   # Load .env file if it exists
-  env_path <- here::here(".env")
+  env_path <- here(".env")
   if (file.exists(env_path)) {
     load_dot_env(env_path)
   } else {
