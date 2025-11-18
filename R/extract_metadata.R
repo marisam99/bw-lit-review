@@ -1,9 +1,8 @@
 # ==============================================================================
 # Title:        Extract Metadata
-# Description:  Core functions for extracting metadata from PDF files using the
-#               OpenAI API. Handles API authentication, PDF upload, extraction
-#               requests, and response parsing.
-# Output:       Data frame with extracted metadata fields
+# Description:  Main extraction functions for processing PDF files through the
+#               OpenAI API to extract bibliographic metadata and key findings.
+# Output:       Data frame with one row per PDF containing extracted metadata
 # ==============================================================================
 
 # Configs ----------------------------------------------------------------------
