@@ -37,7 +37,8 @@ FILE_SIZE_WARNING_MB <- 20
 # Available metadata fields that can be extracted
 METADATA_FIELDS <- list(
   title = "The full title of the document",
-  author = "Primary author(s) or organization",
+  authors = "Primary author(s)",
+  organization = "Publishing organization"
   year = "Publication year",
   state = "U.S. state(s) mentioned or relevant to the research (if applicable)",
   key_findings = "A 2-3 sentence summary of the main findings or conclusions"
@@ -59,7 +60,7 @@ Provide your response as a valid JSON object with these exact keys: {field_names
 
 Important notes:
 - Read the entire document, including any tables, charts, or figures
-- If a field is not found or not applicable, use null
+- If a field is not found or not applicable, use "N/A"
 - For the key_findings field, synthesize information from throughout the document"
 
 # Output Configuration -----------------------------------------------------

@@ -13,14 +13,9 @@ source(here("R/extract_metadata.R"))
 
 # Test 1: File Validation ------------------------------------------------------
 
-message("\n========================================")
-message("TEST 1: File Validation")
-message("========================================\n")
-
 # Test with existing PDF
 test_file <- "Using GPT-5.1 - OpenAI API.pdf"
 
-message("Testing file validation with existing PDF...")
 tryCatch({
   result <- validate_pdf_file(test_file)
   message("✅ File validation passed\n")
@@ -29,7 +24,6 @@ tryCatch({
 })
 
 # Test with non-existent file
-message("Testing file validation with non-existent PDF...")
 tryCatch({
   result <- validate_pdf_file("nonexistent_file.pdf")
   message("❌ Should have failed but didn't\n")
@@ -39,32 +33,28 @@ tryCatch({
 
 # Test 2: Prompt Building ------------------------------------------------------
 
-message("\n========================================")
-message("TEST 2: Prompt Building")
-message("========================================\n")
-
-message("Building extraction prompt with default fields...")
 tryCatch({
   prompt <- build_extraction_prompt()
   message("✅ Prompt built successfully")
   message("\nPrompt preview (first 200 chars):")
-  message(substr(prompt, 1, 200))
+  message(substr(prompt, 1, 1000))
   message("...\n")
 }, error = function(e) {
   message(paste0("❌ Prompt building failed: ", e$message, "\n"))
 })
 
 # Test with custom fields
-message("Building extraction prompt with custom fields...")
 tryCatch({
   prompt <- build_extraction_prompt(fields = c("title", "author", "year"))
   message("✅ Custom prompt built successfully\n")
+  message("\nPrompt preview (first 200 chars):")
+  message(substr(prompt, 1, 1000))
+  message("...\n")
 }, error = function(e) {
   message(paste0("❌ Custom prompt building failed: ", e$message, "\n"))
 })
 
 # Test with invalid field
-message("Testing prompt building with invalid field...")
 tryCatch({
   prompt <- build_extraction_prompt(fields = c("title", "invalid_field"))
   message("❌ Should have failed but didn't\n")
@@ -74,12 +64,7 @@ tryCatch({
 
 # Test 3: Response Parsing -----------------------------------------------------
 
-message("\n========================================")
-message("TEST 3: Response Parsing")
-message("========================================\n")
-
 # Create mock response (simulating API response)
-message("Testing response parsing with mock JSON data...")
 mock_json <- '{
   "title": "Using GPT-5.1 - OpenAI API Documentation",
   "author": "OpenAI",
@@ -99,7 +84,6 @@ tryCatch({
 })
 
 # Test with malformed JSON
-message("Testing response parsing with malformed JSON...")
 tryCatch({
   result <- parse_extraction_response("{ invalid json }")
   message("❌ Should have failed but didn't\n")
@@ -109,15 +93,10 @@ tryCatch({
 
 # Test 4: API Key Loading ------------------------------------------------------
 
-message("\n========================================")
-message("TEST 4: API Key Loading")
-message("========================================\n")
-
-message("Testing API key loading...")
 tryCatch({
   api_key <- load_api_key()
   message("✅ API key loaded successfully")
-  message(paste0("   Key starts with: ", substr(api_key, 1, 5), "...\n"))
+  message(paste0("   Key starts with: ", substr(api_key, 1, 3), "...\n"))
 }, error = function(e) {
   message(paste0("⚠️  Expected error (no .env file): ", e$message, "\n"))
   message("   To enable API testing, create .env file with OPENAI_API_KEY\n")
@@ -125,12 +104,7 @@ tryCatch({
 
 # Test 5: Full Extraction (requires .env) --------------------------------------
 
-message("\n========================================")
-message("TEST 5: Full PDF Extraction")
-message("========================================\n")
-
 if (file.exists(here(".env"))) {
-  message("Testing full extraction with sample PDF...")
   tryCatch({
     result <- extract_pdf_metadata(test_file)
     message("✅ Full extraction successful")
@@ -142,10 +116,6 @@ if (file.exists(here(".env"))) {
   })
 } else {
   message("⚠️  Skipping full extraction test - .env file not found")
-  message("   To run this test:")
-  message("   1. Copy .env.example to .env")
-  message("   2. Add your OPENAI_API_KEY to .env")
-  message("   3. Re-run this test script\n")
 }
 
 # Summary ----------------------------------------------------------------------
