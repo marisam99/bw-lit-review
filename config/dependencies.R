@@ -8,6 +8,9 @@
 # Core data manipulation
 library(tidyverse)  # Includes dplyr, readr, purrr, etc.
 
+# Path management
+library(here)       # Project-relative paths
+
 # API and JSON handling
 library(ellmer)     # LLM API interface with file upload support
 library(jsonlite)   # JSON parsing

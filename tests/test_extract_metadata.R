@@ -8,11 +8,8 @@
 
 # Setup ------------------------------------------------------------------------
 
-# Set working directory to project root
-setwd("/home/user/bw-lit-review")
-
 # Load dependencies and functions
-source("R/extract_metadata.R")
+source(here::here("R/extract_metadata.R"))
 
 # Test 1: File Validation ------------------------------------------------------
 
@@ -132,7 +129,7 @@ message("\n========================================")
 message("TEST 5: Full PDF Extraction")
 message("========================================\n")
 
-if (file.exists(".env")) {
+if (file.exists(here::here(".env"))) {
   message("Testing full extraction with sample PDF...")
   tryCatch({
     result <- extract_pdf_metadata(test_file)
@@ -161,7 +158,7 @@ message("✅ Prompt building functions work correctly")
 message("✅ Response parsing functions work correctly")
 message("✅ API key loading validates .env file properly")
 message("")
-if (file.exists(".env")) {
+if (file.exists(here::here(".env"))) {
   message("✅ Ready for full API testing")
 } else {
   message("⚠️  Create .env file to enable full API testing")

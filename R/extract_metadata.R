@@ -7,8 +7,8 @@
 
 # Configs ----------------------------------------------------------------------
 
-source("config/dependencies.R")
-source("config/settings.R")
+source(here::here("config/dependencies.R"))
+source(here::here("config/settings.R"))
 
 # Helper Functions -------------------------------------------------------------
 
@@ -18,8 +18,9 @@ source("config/settings.R")
 #' @return Character string with API key, or stops with error if not found
 load_api_key <- function() {
   # Load .env file if it exists
-  if (file.exists(".env")) {
-    load_dot_env(".env")
+  env_path <- here::here(".env")
+  if (file.exists(env_path)) {
+    load_dot_env(env_path)
   } else {
     stop("❌ .env file not found. Please create one based on .env.example and add your OPENAI_API_KEY")
   }
