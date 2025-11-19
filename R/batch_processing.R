@@ -225,14 +225,21 @@ process_pdf_batch <- function(fields = DEFAULT_FIELDS,
 #' Save error log to file
 #'
 #' Writes error log entries to a CSV file for later review.
+#' Saves to project root directory by default.
 #' @param error_log List of error log entries from batch processing
-#' @param output_path Path where error log CSV should be saved
+#' @param output_path Path where error log CSV should be saved (defaults to project root)
 #' @return Invisible TRUE if successful
 #' @export
-save_error_log <- function(error_log, output_path = "error_log.csv") {
+save_error_log <- function(error_log, output_path = NULL) {
   if (length(error_log) == 0) {
     message("ℹ️  No errors to log")
     return(invisible(FALSE))
+  }
+
+  # If no path specified, save to project root with timestamp
+  if (is.null(output_path)) {
+    timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
+    output_path <- here(paste0("error_log_", timestamp, ".csv"))
   }
 
   # Convert list to data frame
