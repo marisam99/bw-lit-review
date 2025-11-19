@@ -45,7 +45,7 @@ METADATA_FIELDS <- list(
 )
 
 # Default fields to extract (users can override this)
-DEFAULT_FIELDS <- c("title", "authors", "year", "state", "key_findings")
+DEFAULT_FIELDS <- c("title", "authors", "organization", "year", "state", "key_findings")
 
 # Prompt Template ----------------------------------------------------------
 
