@@ -289,19 +289,82 @@ Create comprehensive documentation to enable users to understand, configure, and
 
 ---
 
-## Phase 6: Testing, Refinement and Deployment
+## Phase 6: Shiny App Development
 
 **Status:** Not Started
 **Estimated Duration:** 2-3 development sessions
 **Dependencies:** Phase 5 complete
 
 ### Objectives:
-Test the tool with real documents, polish based on testing feedback, optimize performance, and prepare for production use.
+Create a user-friendly Shiny web application that provides a graphical interface for non-technical users to process PDFs without using R scripts directly.
 
 ### Tasks:
 
-#### 6.1: Manual Integration Testing
-- [ ] Test complete workflow with real research PDFs
+#### 6.1: UI Design and Layout
+- [ ] Create main page layout with file upload widget
+- [ ] Add metadata field selection checkboxes (pre-populated with DEFAULT_FIELDS)
+- [ ] Design results display area with data table
+- [ ] Add download button for CSV export
+- [ ] Create progress indicators and status messages
+- [ ] Design error log viewer panel
+
+#### 6.2: Core Shiny Functionality
+- [ ] Implement file upload handler supporting multiple PDFs
+- [ ] Connect UI to `process_pdf_batch()` backend function
+- [ ] Add reactive processing triggered by "Process PDFs" button
+- [ ] Implement progress tracking using Shiny progress bars
+- [ ] Display results in interactive data table (using DT package)
+- [ ] Enable CSV download of results
+
+#### 6.3: Configuration and Settings
+- [ ] Add settings panel for batch processing parameters (delay, retry attempts)
+- [ ] Include API model selection dropdown (if multiple models available)
+- [ ] Add option to customize system prompt
+- [ ] Include help/instructions panel with usage guide
+
+#### 6.4: Error Handling and User Feedback
+- [ ] Display error messages in user-friendly format
+- [ ] Show error log summary with expandable details
+- [ ] Add validation for file types and sizes
+- [ ] Implement session state management
+- [ ] Add "Clear All" functionality to reset application
+
+#### 6.5: Testing and Polish
+- [ ] Test with various file upload scenarios
+- [ ] Verify all UI elements work correctly
+- [ ] Test error handling paths
+- [ ] Optimize UI responsiveness
+- [ ] Add loading spinners and visual feedback
+
+### Deliverables:
+- `/app.R` - Main Shiny application file
+- `/R/shiny_helpers.R` - Helper functions for Shiny app (optional)
+- Updated dependencies.R with shiny and DT packages
+- Shiny app usage documentation in README
+- Screenshots of the application interface (optional)
+
+### Implementation Notes:
+- Use existing backend functions (`process_pdf_batch()`, `extract_pdf_metadata()`)
+- Keep UI simple and intuitive for non-technical users
+- Ensure API key is loaded from .env file (not exposed in UI)
+- Handle long-running API calls gracefully with progress feedback
+- Allow users to continue working after download (don't reset unnecessarily)
+
+---
+
+## Phase 7: Testing, Refinement and Deployment
+
+**Status:** Not Started
+**Estimated Duration:** 2-3 development sessions
+**Dependencies:** Phase 6 complete
+
+### Objectives:
+Test the tool (both R scripts and Shiny app) with real documents, polish based on testing feedback, optimize performance, and prepare for production use.
+
+### Tasks:
+
+#### 7.1: Manual Integration Testing
+- [ ] Test complete workflow with real research PDFs (both R scripts and Shiny app)
 - [ ] Verify metadata extraction accuracy across different document types
 - [ ] Test edge cases:
   - PDFs without clear metadata
@@ -311,29 +374,34 @@ Test the tool with real documents, polish based on testing feedback, optimize pe
   - Documents with tables and figures
 - [ ] Document any limitations or failure patterns
 - [ ] Record test results and any issues discovered
+- [ ] Test Shiny app with multiple concurrent users (if applicable)
 
-#### 6.2: Performance Optimization
+#### 7.2: Performance Optimization
 - [ ] Review API timeout and retry settings based on test results
 - [ ] Optimize batch processing delay if needed
 - [ ] Test with larger batches (20+ files)
 - [ ] Monitor and document API costs per file
+- [ ] Optimize Shiny app performance and memory usage
 
-#### 6.3: User Experience Refinement
+#### 7.3: User Experience Refinement
 - [ ] Improve error messages based on testing feedback
-- [ ] Enhance progress reporting clarity
+- [ ] Enhance progress reporting clarity (both CLI and Shiny)
 - [ ] Verify all user-facing messages are actionable
 - [ ] Polish console output formatting
+- [ ] Refine Shiny app UI/UX based on user testing
 
-#### 6.4: Final Code Review
+#### 7.4: Final Code Review
 - [ ] Verify dependency management is clean
 - [ ] Remove any debug code or comments
 - [ ] Ensure consistent code organization across all scripts
 - [ ] Final verification of coding standards compliance
+- [ ] Code review for Shiny app security (API key handling, input validation)
 
-#### 6.5: Deployment Preparation
+#### 7.5: Deployment Preparation
 - [ ] Create example .env file with clear instructions
 - [ ] Prepare sample PDFs for testing (if applicable)
-- [ ] Write deployment checklist
+- [ ] Write deployment checklist (for both R scripts and Shiny app)
+- [ ] Document how to deploy Shiny app (local vs. server)
 - [ ] Tag stable version in git
 
 ### Deliverables:
@@ -354,8 +422,9 @@ The project will be considered complete when:
 3. ✅ Output saves to CSV format (results returned as data frame with optional CSV export)
 4. ✅ Error handling manages failures gracefully with retry logic and error logging
 5. ⏳ Documentation enables non-technical users to run the tool (Phase 5 - In Progress)
-6. ✅ Code follows all standards specified in Claude.md
-7. ⏳ Testing validates accuracy with real research documents (Phase 6 - Pending manual testing)
+6. ⏳ Shiny app provides user-friendly GUI interface (Phase 6 - Not Started)
+7. ✅ Code follows all standards specified in Claude.md
+8. ⏳ Testing validates accuracy with real research documents (Phase 7 - Pending manual testing)
 
 ---
 
@@ -400,9 +469,10 @@ The project will be considered complete when:
 - **Phase 3:** ✅ Complete (Nov 18-19, 2025)
 - **Phase 4:** ✅ Complete - Simplified (Nov 19, 2025)
 - **Phase 5:** ⏳ In Progress (1-2 sessions, ~3-5 days) - Documentation
-- **Phase 6:** Not Started (2-3 sessions, ~1 week) - Testing, Refinement, and Deployment
+- **Phase 6:** Not Started (2-3 sessions, ~1 week) - Shiny App Development
+- **Phase 7:** Not Started (2-3 sessions, ~1 week) - Testing, Refinement, and Deployment
 
-**Total Estimated Time:** 4-5 weeks of active development
+**Total Estimated Time:** 5-6 weeks of active development
 **Actual Progress:** Phases 1-4 completed in ~3 days (ahead of schedule due to simplified Phase 4 approach)
 
 ---
@@ -419,4 +489,5 @@ The project will be considered complete when:
 | 2025-11-19 | Phase 4 | Updated `run_summarize_literature.R` to use batch processing with automatic error logging and results summary display |
 | 2025-11-19 | Phase 4 | Completed Phase 4 in simplified form - integrated batch processing directly into main script rather than creating separate utility functions |
 | 2025-11-19 | Planning | Restructured Phases 5 and 6: Phase 5 now focuses on documentation only; manual integration testing moved to Phase 6; added coding standards review task |
+| 2025-11-19 | Planning | Added new Phase 6 for Shiny App Development; renumbered previous Phase 6 to Phase 7; updated success criteria to include Shiny app requirement |
 
