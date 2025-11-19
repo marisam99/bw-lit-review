@@ -1,0 +1,4 @@
+timestamp,filename,error_type,error_message,attempt_number
+2025-11-19 10:15:00,paper1.pdf,simpleError,Network timeout,1
+2025-11-19 10:15:05,paper1.pdf,simpleError,Network timeout,2
+2025-11-19 10:20:00,paper2.pdf,simpleError,API rate limit exceeded,1

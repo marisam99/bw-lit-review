@@ -1,0 +1,2 @@
+timestamp,filename,error_type,error_message,attempt_number
+2025-11-18 19:22:00,Abott_2020.pdf,character,Tibble columns must have compatible sizes.,1

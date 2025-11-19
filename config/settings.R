@@ -14,8 +14,8 @@ OPENAI_MODEL <- "gpt-5.1"  # Latest flagship model in GPT-5 family
 # NOTE: GPT-5.1 uses the Responses API (not Chat Completions API)
 
 # GPT-5.1 specific parameters
-REASONING_EFFORT <- "none"  # Options: "none" (fastest), "low", "medium", "high"
-VERBOSITY_LEVEL <- "medium"  # Options: "low", "medium", "high"
+REASONING_EFFORT <- "none"  # Options: "none" (fastest), "minimal", "low", "medium", "high"
+VERBOSITY <- "medium"  # Options: "low", "medium", "high"
 
 # API parameters
 API_MAX_TOKENS <- 1500  # Maximum tokens in response
@@ -45,7 +45,7 @@ METADATA_FIELDS <- list(
 )
 
 # Default fields to extract (users can override this)
-DEFAULT_FIELDS <- c("title", "authors", "year", "state", "key_findings")
+DEFAULT_FIELDS <- c("title", "authors", "organization", "year", "state", "key_findings")
 
 # Prompt Template ----------------------------------------------------------
 
