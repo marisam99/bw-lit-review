@@ -31,13 +31,12 @@ source(here("R/api_call_extraction.R"))
 #' @param successful Count of successful extractions so far
 #' @param failed Count of failed extractions so far
 display_progress <- function(current, total, filename, successful, failed) {
-  progress_pct <- round((current - 1) / total * 100)
   message(paste0(
-    "\n📊 Progress: ", current, "/", total, " (", progress_pct, "%) | ",
+    "\n📊 Progress: ",
     "✅ ", successful, " successful | ",
     "❌ ", failed, " failed"
   ))
-  message(paste0("📄 Processing: ", filename))
+  message(paste0("📄 Processing: ", filename, " (", current, "/", total, ")"))
 }
 
 

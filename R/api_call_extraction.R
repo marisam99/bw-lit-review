@@ -67,8 +67,6 @@ extract_pdf_metadata <- function(pdf_path = NULL, fields = DEFAULT_FIELDS, max_a
   # Retry loop for transient failures
   for (attempt in 1:max_attempts) {
     result <- tryCatch({
-      message(paste0("📄 Processing: ", filename))
-
       # Make API request using ellmer
       chat <- chat_openai(
         model = OPENAI_MODEL,
