@@ -7,13 +7,17 @@
 # Setup ------------------------------------------------------------------------
 
 # Load dependencies and functions
-source(here("R/MAIN_summarize_literature.R"))
+source(here("config/dependencies.R"))
+source(here("config/settings.R"))
+source(here("R/build_prompt.R"))
+source(here("R/process_response.R"))
+source(here("R/api_call_extraction.R"))
 
 # Test 1: Full Extraction (requires .env) --------------------------------------
 
 if (file.exists(here(".env"))) {
   tryCatch({
-    result <- extract_pdf_metadata(test_file)
+    result <- extract_pdf_metadata()
     message("✅ Full extraction successful")
     message("\nExtracted metadata:")
     print(result)

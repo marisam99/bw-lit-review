@@ -133,76 +133,15 @@ tryCatch({
   message(paste0("❌ Empty error log handling failed: ", e$message, "\n"))
 })
 
-# Test 5: Retry Logic in extract_pdf_metadata() -------------------------------
-
-if (file.exists(here(".env"))) {
-  message("Testing retry logic with actual API call:\n")
-
-  test_file <- here("tests", "test_samples", "Abott_2020.pdf")
-
-  if (file.exists(test_file)) {
-    tryCatch({
-      # Test normal extraction (should succeed on first try)
-      result <- extract_pdf_metadata(test_file, max_attempts = 3)
-
-      if (result$success) {
-        message("✅ Extraction with retry logic successful")
-        message(paste0("   Attempts logged: ", length(result$error_log)))
-        message("\nExtracted data preview:")
-        print(head(result$data))
-        message("")
-      } else {
-        message("❌ Extraction failed")
-        message(paste0("   Error count: ", length(result$error_log), "\n"))
-      }
-    }, error = function(e) {
-      message(paste0("❌ Extraction test failed: ", e$message, "\n"))
-    })
-  } else {
-    message("⚠️  Test file not found, skipping extraction test\n")
-  }
-} else {
-  message("⚠️  Skipping API extraction test - .env file not found")
-  message("   To enable full testing, create .env file with OPENAI_API_KEY\n")
-}
-
 # Test 6: Batch Processing (Interactive Test) ---------------------------------
 
-message("========================================")
-message("Batch Processing Interactive Test")
-message("========================================")
-message("")
-message("NOTE: The full batch processing test requires manual file selection.")
-message("To test process_pdf_batch():")
-message("  1. Ensure you have test PDFs available")
-message("  2. Run: result <- process_pdf_batch()")
-message("  3. Select 2-3 test PDF files when prompted")
-message("  4. Review the progress output and final results")
-message("")
-message("Example usage:")
-message("  result_list <- process_pdf_batch()")
-message("  results_df <- result_list$results")
-message("  save_error_log(result_list$error_log)")
-message("")
-message("To test programmatically (without file picker):")
-message("  # Create vector of test file paths")
-message("  test_files <- c(")
-message("    here('tests', 'test_samples', 'Abott_2020.pdf'),")
-message("    # Add more test files here")
-message("  )")
-message("  # Note: You would need to modify process_pdf_batch() to accept paths")
-message("  # for programmatic testing, or test extract_pdf_metadata() directly")
-message("")
+# NOTE: The full batch processing test requires manual file selection."
+# To test process_pdf_batch():
+#   1. Ensure you have test PDFs available
+#   2. Run: result <- process_pdf_batch()
+#   3. Select 2-3 test PDF files when prompted
+#   4. Review the progress output and final results
 
-# Test 7: Summary --------------------------------------------------------------
-
-message("========================================")
-message("Test Summary")
-message("========================================")
-message("✅ Helper functions tested successfully")
-message("✅ Error logging tested successfully")
-message("✅ Progress display tested successfully")
-message("📋 Batch processing ready for interactive testing")
-message("")
-message("All batch processing components are working correctly!")
-message("")
+result_list <- process_pdf_batch()
+results_df <- result_list$results
+save_error_log(result_list$error_log)
