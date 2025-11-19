@@ -8,7 +8,7 @@
 
 #' Validate that a PDF file exists and is readable
 #'
-#' Checks file existence, readability, and size, with warnings for large files.
+#' Checks file existence, readability, and extension.
 #' @param file_path Path to PDF file
 #' @return Logical TRUE if valid, stops with error if not
 validate_pdf_file <- function(file_path) {
@@ -25,12 +25,6 @@ validate_pdf_file <- function(file_path) {
   # Check file extension
   if (!grepl("\\.pdf$", tolower(file_path))) {
     warning(paste0("⚠️  File does not have .pdf extension: ", file_path))
-  }
-
-  # Check file size and warn if large
-  file_size_mb <- file.size(file_path) / (1024^2)
-  if (file_size_mb > FILE_SIZE_WARNING_MB) {
-    warning(paste0("⚠️  Large file (", round(file_size_mb, 1), " MB). Processing may take longer and cost more."))
   }
 
   return(TRUE)
