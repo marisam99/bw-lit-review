@@ -49,8 +49,18 @@ parse_extraction_response <- function(response, expected_fields = DEFAULT_FIELDS
 
   # Convert to data frame row
   # Handle NULL values by converting to NA
+  # Handle list values by collapsing into semicolon-separated strings
   df_row <- parsed_data[expected_fields] |>
-    map(~ if (is.null(.x)) NA_character_ else as.character(.x)) |>
+    map(~ {
+      if (is.null(.x)) {
+        NA_character_
+      } else if (is.list(.x)) {
+        # Collapse lists into a single semicolon-separated string
+        paste(unlist(.x), collapse = "; ")
+      } else {
+        as.character(.x)
+      }
+    }) |>
     as_tibble()
 
   return(df_row)

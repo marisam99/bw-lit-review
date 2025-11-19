@@ -9,7 +9,7 @@
 # Setup ------------------------------------------------------------------------
 
 # Load dependencies and constants
-source(here("config/dependencies"))
+source(here("config/dependencies.R"))
 source(here("config/settings.R"))
 
 # Test 1: API Key Loading ------------------------------------------------------
