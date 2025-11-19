@@ -150,7 +150,9 @@ process_pdf_batch <- function(fields = DEFAULT_FIELDS,
     if (!file.exists(pdf_path)) {
       message(paste0("❌ File not found, skipping: ", filename, "\n"))
       failed_count <- failed_count + 1
-      error_entry <- create_error_log_entry(filename, "File not found", 1)
+      # Create simple error object for file not found
+      file_error <- simpleError("File not found")
+      error_entry <- create_error_log_entry(filename, file_error, 1)
       all_error_logs <- c(all_error_logs, list(error_entry))
       next
     }

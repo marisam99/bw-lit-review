@@ -17,17 +17,32 @@ source(here("R/process_response.R"))
 #' Create error log entry for failed extractions
 #'
 #' Generates a structured error record with timestamp, filename, error details,
-#' and retry attempt number.
+#' and retry attempt number. Handles special error types (httr2, rlang) robustly.
 #' @param filename Name of the PDF file that failed
-#' @param error_message The error message from the failure
+#' @param error_obj The error object from the failure
 #' @param attempt_number Which retry attempt this was (1-based)
 #' @return Named list with error details
-create_error_log_entry <- function(filename, error_message, attempt_number) {
+create_error_log_entry <- function(filename, error_obj, attempt_number) {
+  # Extract error message safely
+  error_msg <- tryCatch({
+    if (inherits(error_obj, "httr2_error")) {
+      # For httr2 errors, get the message more carefully
+      conditionMessage(error_obj)
+    } else if (is.character(error_obj)) {
+      error_obj
+    } else {
+      as.character(error_obj)
+    }
+  }, error = function(e) {
+    # Fallback if even getting the message fails
+    paste("Error extracting error message:", class(error_obj)[1])
+  })
+
   list(
     timestamp = format(Sys.time(), "%Y-%m-%d %H:%M:%S"),
     filename = filename,
-    error_type = class(error_message)[1],
-    error_message = as.character(error_message),
+    error_type = class(error_obj)[1],
+    error_message = error_msg,
     attempt_number = attempt_number
   )
 }
@@ -103,11 +118,11 @@ extract_pdf_metadata <- function(pdf_path = NULL, fields = DEFAULT_FIELDS, max_a
 
     }, error = function(e) {
       # Log this attempt
-      error_entry <- create_error_log_entry(filename, e$message, attempt)
+      error_entry <- create_error_log_entry(filename, e, attempt)
       error_log <<- c(error_log, list(error_entry))
 
       # Determine if we should retry
-      error_msg <- tolower(e$message)
+      error_msg <- tolower(conditionMessage(e))
       is_retryable <- grepl("timeout|rate limit|network|connection|temporary|503|502|429", error_msg)
 
       if (is_retryable && attempt < max_attempts) {

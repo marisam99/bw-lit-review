@@ -17,9 +17,11 @@ source(here("R/batch_processing.R"))
 # Test 1: Error Log Entry Creation --------------------------------------------
 
 tryCatch({
+  # Create a simple error object for testing
+  test_error <- simpleError("Network timeout")
   error_entry <- create_error_log_entry(
     filename = "test.pdf",
-    error_message = "Network timeout",
+    error_obj = test_error,
     attempt_number = 2
   )
 
