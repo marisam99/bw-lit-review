@@ -71,7 +71,12 @@ extract_pdf_metadata <- function(pdf_path = NULL, fields = DEFAULT_FIELDS, max_a
       chat <- chat_openai(
         model = OPENAI_MODEL,
         api_key = api_key,
-        system_prompt = SYSTEM_PROMPT
+        system_prompt = SYSTEM_PROMPT,
+        api_args = list(
+          reasoning_effort = REASONING_EFFORT,
+          verbosity_level = VERBOSITY_LEVEL
+        ),
+        echo = "none"  # Suppress console output
       )
 
       # Upload PDF and send request
