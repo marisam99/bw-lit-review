@@ -88,7 +88,8 @@ extract_pdf_metadata <- function(pdf_path = NULL, fields = DEFAULT_FIELDS, max_a
         api_key = api_key,
         system_prompt = SYSTEM_PROMPT,
         api_args = list(
-          reasoning_effort = REASONING_EFFORT
+          reasoning_effort = REASONING_EFFORT,
+          verbosity = VERBOSITY
         ),
         echo = "none"  # Suppress console output
       )
