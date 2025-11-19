@@ -233,29 +233,18 @@ Create simple, user-friendly main function and supporting utilities for file sel
 
 ---
 
-## Phase 5: Testing and Documentation
+## Phase 5: Documentation
 
 **Status:** Not Started
-**Estimated Duration:** 2-3 development sessions
+**Estimated Duration:** 1-2 development sessions
 **Dependencies:** Phase 4 complete
 
 ### Objectives:
-Create comprehensive documentation and perform end-to-end testing to ensure tool reliability.
+Create comprehensive documentation to enable users to understand, configure, and use the tool effectively.
 
 ### Tasks:
 
-#### 5.1: Manual Integration Testing
-- [ ] Test complete workflow with real research PDFs
-- [ ] Verify metadata extraction accuracy across different document types
-- [ ] Test edge cases:
-  - PDFs without clear metadata
-  - Large files (> 20MB)
-  - Scanned documents vs. text PDFs
-  - Multi-author papers
-  - Documents with tables and figures
-- [ ] Document any limitations or failure patterns
-
-#### 5.2: README Documentation
+#### 5.1: README Documentation
 - [ ] Write **Overview** section:
   - Project description
   - Input/output specifications
@@ -277,13 +266,14 @@ Create comprehensive documentation and perform end-to-end testing to ensure tool
   - Adjusting batch processing settings
 - [ ] Add **Support** section with contact information
 
-#### 5.3: Code Documentation
+#### 5.2: Code Documentation
 - [ ] Review all function comments for clarity and completeness
 - [ ] Ensure all scripts have proper headers
 - [ ] Verify inline comments explain "why" not "what"
 - [ ] Add examples in comments where helpful
+- [ ] Review all code for adherence to coding standards specified in Claude.md
 
-#### 5.4: Configuration Documentation
+#### 5.3: Configuration Documentation
 - [ ] Create `/config/README.md` explaining:
   - Available OpenAI models and tradeoffs
   - How to modify metadata fields
@@ -294,50 +284,63 @@ Create comprehensive documentation and perform end-to-end testing to ensure tool
 ### Deliverables:
 - Complete `/README.md` file
 - `/config/README.md` configuration guide
-- Test results documentation
-- Known limitations list
+- Updated code comments and documentation
+- Known limitations documented in README
 
 ---
 
-## Phase 6: Refinement and Deployment
+## Phase 6: Testing, Refinement and Deployment
 
 **Status:** Not Started
-**Estimated Duration:** 1-2 development sessions
+**Estimated Duration:** 2-3 development sessions
 **Dependencies:** Phase 5 complete
 
 ### Objectives:
-Polish the tool based on testing feedback, optimize performance, and prepare for production use.
+Test the tool with real documents, polish based on testing feedback, optimize performance, and prepare for production use.
 
 ### Tasks:
 
-#### 6.1: Performance Optimization
-- [ ] Review API timeout and retry settings
+#### 6.1: Manual Integration Testing
+- [ ] Test complete workflow with real research PDFs
+- [ ] Verify metadata extraction accuracy across different document types
+- [ ] Test edge cases:
+  - PDFs without clear metadata
+  - Large files (> 20MB)
+  - Scanned documents vs. text PDFs
+  - Multi-author papers
+  - Documents with tables and figures
+- [ ] Document any limitations or failure patterns
+- [ ] Record test results and any issues discovered
+
+#### 6.2: Performance Optimization
+- [ ] Review API timeout and retry settings based on test results
 - [ ] Optimize batch processing delay if needed
 - [ ] Test with larger batches (20+ files)
 - [ ] Monitor and document API costs per file
 
-#### 6.2: User Experience Refinement
+#### 6.3: User Experience Refinement
 - [ ] Improve error messages based on testing feedback
 - [ ] Enhance progress reporting clarity
 - [ ] Verify all user-facing messages are actionable
 - [ ] Polish console output formatting
 
-#### 6.3: Final Code Review
-- [ ] Check adherence to coding standards (tidyverse style, naming conventions)
+#### 6.4: Final Code Review
 - [ ] Verify dependency management is clean
 - [ ] Remove any debug code or comments
 - [ ] Ensure consistent code organization across all scripts
+- [ ] Final verification of coding standards compliance
 
-#### 6.4: Deployment Preparation
+#### 6.5: Deployment Preparation
 - [ ] Create example .env file with clear instructions
 - [ ] Prepare sample PDFs for testing (if applicable)
 - [ ] Write deployment checklist
 - [ ] Tag stable version in git
 
 ### Deliverables:
+- Test results documentation with edge case analysis
 - Production-ready codebase
 - Deployment checklist
-- Performance benchmarks
+- Performance benchmarks and API cost estimates
 - Final git tag (v1.0.0)
 
 ---
@@ -352,7 +355,7 @@ The project will be considered complete when:
 4. ✅ Error handling manages failures gracefully with retry logic and error logging
 5. ⏳ Documentation enables non-technical users to run the tool (Phase 5 - In Progress)
 6. ✅ Code follows all standards specified in Claude.md
-7. ⏳ Testing validates accuracy with real research documents (Phase 5 - Pending manual testing)
+7. ⏳ Testing validates accuracy with real research documents (Phase 6 - Pending manual testing)
 
 ---
 
@@ -396,8 +399,8 @@ The project will be considered complete when:
 - **Phase 2:** ✅ Complete (Nov 17, 2025)
 - **Phase 3:** ✅ Complete (Nov 18-19, 2025)
 - **Phase 4:** ✅ Complete - Simplified (Nov 19, 2025)
-- **Phase 5:** ⏳ In Progress (2-3 sessions, ~1 week)
-- **Phase 6:** Not Started (1-2 sessions, ~3-5 days)
+- **Phase 5:** ⏳ In Progress (1-2 sessions, ~3-5 days) - Documentation
+- **Phase 6:** Not Started (2-3 sessions, ~1 week) - Testing, Refinement, and Deployment
 
 **Total Estimated Time:** 4-5 weeks of active development
 **Actual Progress:** Phases 1-4 completed in ~3 days (ahead of schedule due to simplified Phase 4 approach)
@@ -415,4 +418,5 @@ The project will be considered complete when:
 | 2025-11-19 | Phase 3 | Added "organization" field to DEFAULT_FIELDS in settings.R for capturing publishing organization metadata |
 | 2025-11-19 | Phase 4 | Updated `run_summarize_literature.R` to use batch processing with automatic error logging and results summary display |
 | 2025-11-19 | Phase 4 | Completed Phase 4 in simplified form - integrated batch processing directly into main script rather than creating separate utility functions |
+| 2025-11-19 | Planning | Restructured Phases 5 and 6: Phase 5 now focuses on documentation only; manual integration testing moved to Phase 6; added coding standards review task |
 
