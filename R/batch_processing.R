@@ -8,9 +8,9 @@
 
 # Configs ----------------------------------------------------------------------
 
-source("config/dependencies.R")
-source("config/settings.R")
-source("R/extract_metadata.R")
+source(here("config/dependencies.R"))
+source(here("config/settings.R"))
+source(here("R/api_call_extraction.R"))
 
 # Helper Functions -------------------------------------------------------------
 
