@@ -146,15 +146,14 @@ Enable multi-file processing with robust error handling, retry logic, and progre
 
 ### Completed Deliverables:
 - `/R/batch_processing.R` - Batch processing and error handling functions with:
-  - `process_pdf_batch()` - Main batch orchestration with progress tracking and multi-file picker
-  - `extract_batch_interactive()` - Convenience wrapper for quick interactive use
+  - `process_pdf_batch()` - Main function with interactive file picker, progress tracking, and error handling
   - `extract_with_retry()` - Retry logic with exponential backoff
   - `create_error_log_entry()` - Structured error logging
   - `display_progress()` - Real-time progress indicators
   - `generate_error_summary()` - Human-readable error reports
   - `save_error_log()` - Error log export to CSV
 - Error log format specification (CSV with timestamp, filename, error_type, error_message, attempt_number)
-- Multi-file picker using tcltk with fallback to repeated file.choose()
+- Interactive file picker supporting single or multiple file selection
 
 ### Implementation Notes:
 - Retry mechanism uses exponential backoff (2^attempt * base_delay)
@@ -166,10 +165,9 @@ Enable multi-file processing with robust error handling, retry logic, and progre
 - Rate limiting configurable via settings (default 0.5s between requests)
 - All console output uses color-coded emojis for visual clarity (📊 progress, ✅ success, ❌ error, ⚠️ warning)
 - Returns structured list with results data frame, error log, and summary statistics
-- Interactive multi-file picker using tcltk::tk_choose.files() for selecting multiple PDFs at once
-- Fallback to repeated file.choose() if tcltk not available
-- Can call `process_pdf_batch()` with no arguments to open file picker automatically
-- `extract_batch_interactive()` provides simplified interface returning just the results
+- Always opens file picker - user can select 1 or more files
+- Uses tcltk::tk_choose.files() for multi-file selection with fallback to repeated file.choose()
+- Simple single-function interface: `process_pdf_batch()` handles everything
 
 ---
 

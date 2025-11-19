@@ -5,18 +5,13 @@
 #               rate limiting and comprehensive error logging.
 # Output:       Combined data frame of results from multiple PDFs
 #
-# Usage Examples:
-#   # Interactive mode - opens file picker to select multiple PDFs
-#   results <- extract_batch_interactive()
-#
-#   # Or with process_pdf_batch() for more control
-#   result_list <- process_pdf_batch()  # Opens file picker
+# Usage:
+#   # Always opens file picker - select 1 or more PDFs
+#   result_list <- process_pdf_batch()
 #   results_df <- result_list$results
-#   save_error_log(result_list$error_log)
 #
-#   # Programmatic mode - provide file paths directly
-#   pdf_files <- c("paper1.pdf", "paper2.pdf", "paper3.pdf")
-#   result_list <- process_pdf_batch(pdf_files)
+#   # Optionally save error log if there were failures
+#   save_error_log(result_list$error_log)
 # ==============================================================================
 
 # Configs ----------------------------------------------------------------------
@@ -173,59 +168,51 @@ generate_error_summary <- function(error_log) {
 
 # Main Functions ---------------------------------------------------------------
 
-#' Process multiple PDF files in batch
+#' Process PDF files in batch with interactive file picker
 #'
-#' Main batch processing function that orchestrates extraction across multiple
-#' files with progress tracking, error handling, and rate limiting.
-#' @param pdf_paths Character vector of PDF file paths to process. If NULL, opens multi-file picker dialog.
+#' Opens a file picker to select one or more PDF files, then processes them with
+#' progress tracking, error handling, and retry logic. Works whether you select
+#' a single file or multiple files.
 #' @param fields Character vector of metadata fields to extract (defaults to DEFAULT_FIELDS)
 #' @param delay_seconds Delay between API requests for rate limiting (defaults to BATCH_DELAY_SECONDS)
 #' @return List with results data frame, error log, and summary statistics
 #' @export
-process_pdf_batch <- function(pdf_paths = NULL,
-                               fields = DEFAULT_FIELDS,
+process_pdf_batch <- function(fields = DEFAULT_FIELDS,
                                delay_seconds = BATCH_DELAY_SECONDS) {
-  # If no paths provided, open multi-file picker
-  if (is.null(pdf_paths) || length(pdf_paths) == 0) {
-    message("📂 Opening file picker... (Select one or more PDF files)")
+  # Always open file picker
+  message("📂 Opening file picker... (Select one or more PDF files)")
 
-    # Try using tcltk for cross-platform multi-file selection
-    pdf_paths <- tryCatch({
-      tcltk::tk_choose.files(
-        default = "",
-        caption = "Select PDF files to process",
-        multi = TRUE,
-        filters = matrix(c("PDF files", ".pdf", "All files", "*"), 2, 2, byrow = TRUE)
-      )
-    }, error = function(e) {
-      # Fallback to base file.choose() if tcltk not available
-      warning("⚠️  Multi-file picker not available. Please select files one at a time (press Cancel when done).")
-      selected_files <- character()
-      repeat {
-        tryCatch({
-          file_path <- file.choose()
-          selected_files <- c(selected_files, file_path)
-          message(paste0("✓ Selected: ", basename(file_path), " (", length(selected_files), " files total)"))
-        }, error = function(e) {
-          # User cancelled, we're done
-          break
-        })
-      }
-      return(selected_files)
-    })
-
-    # Check if user cancelled without selecting files
-    if (length(pdf_paths) == 0) {
-      stop("❌ No files selected. Batch processing cancelled.")
+  # Try using tcltk for cross-platform multi-file selection
+  pdf_paths <- tryCatch({
+    tcltk::tk_choose.files(
+      default = "",
+      caption = "Select PDF files to process",
+      multi = TRUE,
+      filters = matrix(c("PDF files", ".pdf", "All files", "*"), 2, 2, byrow = TRUE)
+    )
+  }, error = function(e) {
+    # Fallback to base file.choose() if tcltk not available
+    warning("⚠️  Multi-file picker not available. Please select files one at a time (press Cancel when done).")
+    selected_files <- character()
+    repeat {
+      tryCatch({
+        file_path <- file.choose()
+        selected_files <- c(selected_files, file_path)
+        message(paste0("✓ Selected: ", basename(file_path), " (", length(selected_files), " files total)"))
+      }, error = function(e) {
+        # User cancelled, we're done
+        break
+      })
     }
+    return(selected_files)
+  })
 
-    message(paste0("✅ Selected ", length(pdf_paths), " file(s) for processing\n"))
-  }
-
-  # Validate inputs
+  # Check if user cancelled without selecting files
   if (length(pdf_paths) == 0) {
-    stop("❌ No PDF files provided for processing")
+    stop("❌ No files selected. Batch processing cancelled.")
   }
+
+  message(paste0("✅ Selected ", length(pdf_paths), " file(s) for processing\n"))
 
   # Initialize tracking variables
   total_files <- length(pdf_paths)
@@ -345,21 +332,4 @@ save_error_log <- function(error_log, output_path = "error_log.csv") {
   message(paste0("📝 Error log saved to: ", output_path))
 
   return(invisible(TRUE))
-}
-
-
-#' Extract metadata from multiple PDFs with interactive file picker
-#'
-#' Convenience wrapper for process_pdf_batch() that opens a file picker,
-#' processes selected PDFs, and returns just the results data frame.
-#' Perfect for quick interactive use.
-#' @param fields Character vector of metadata fields to extract (defaults to DEFAULT_FIELDS)
-#' @return Data frame with extracted metadata from all successfully processed PDFs
-#' @export
-extract_batch_interactive <- function(fields = DEFAULT_FIELDS) {
-  # Call process_pdf_batch with NULL paths to trigger file picker
-  result <- process_pdf_batch(pdf_paths = NULL, fields = fields)
-
-  # Return just the results data frame for convenience
-  return(result$results)
 }
