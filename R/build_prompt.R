@@ -1,46 +1,10 @@
 # ==============================================================================
-# Title:        Extract Metadata
-# Description:  Core functions for extracting metadata from PDF files using the
-#               OpenAI API. Handles API authentication, PDF upload, extraction
-#               requests, and response parsing.
-# Output:       Data frame with extracted metadata fields
+# Title:        Build Prompts
+# Description:  Validate input (PDF) and combine with system and user prompts
+# Output:       Character string with entire prompt to be sent to AI model
 # ==============================================================================
 
-# Configs ----------------------------------------------------------------------
-
-source("config/dependencies.R")
-source("config/settings.R")
-
 # Helper Functions -------------------------------------------------------------
-
-#' Load and validate OpenAI API key from environment
-#'
-#' Loads .env file and validates that OPENAI_API_KEY is present and non-empty.
-#' @return Character string with API key, or stops with error if not found
-load_api_key <- function() {
-  # Load .env file if it exists
-  if (file.exists(".env")) {
-    load_dot_env(".env")
-  } else {
-    stop("❌ .env file not found. Please create one based on .env.example and add your OPENAI_API_KEY")
-  }
-
-  # Get API key from environment
-  api_key <- Sys.getenv("OPENAI_API_KEY")
-
-  # Validate API key exists and is not empty
-  if (api_key == "" || is.null(api_key)) {
-    stop("❌ OPENAI_API_KEY not found in .env file. Please add your OpenAI API key")
-  }
-
-  # Basic format validation (OpenAI keys typically start with "sk-")
-  if (!grepl("^sk-", api_key)) {
-    warning("⚠️  API key format looks unusual. OpenAI keys typically start with 'sk-'")
-  }
-
-  return(api_key)
-}
-
 
 #' Validate that a PDF file exists and is readable
 #'
@@ -147,8 +111,18 @@ parse_extraction_response <- function(response, expected_fields = DEFAULT_FIELDS
 
   # Convert to data frame row
   # Handle NULL values by converting to NA
+  # Handle list values by collapsing into semicolon-separated strings
   df_row <- parsed_data[expected_fields] |>
-    map(~ if (is.null(.x)) NA_character_ else as.character(.x)) |>
+    map(~ {
+      if (is.null(.x)) {
+        NA_character_
+      } else if (is.list(.x)) {
+        # Collapse lists into a single semicolon-separated string
+        paste(unlist(.x), collapse = "; ")
+      } else {
+        as.character(.x)
+      }
+    }) |>
     as_tibble()
 
   return(df_row)
@@ -161,11 +135,16 @@ parse_extraction_response <- function(response, expected_fields = DEFAULT_FIELDS
 #' Main extraction function that orchestrates the entire process: validates file,
 #' loads API key, uploads PDF to OpenAI, sends extraction request, and returns
 #' parsed metadata.
-#' @param pdf_path Path to PDF file to process
+#' @param pdf_path Path to PDF file to process. If NULL, opens file chooser dialog.
 #' @param fields Character vector of metadata fields to extract (defaults to DEFAULT_FIELDS)
 #' @return Data frame with one row containing extracted metadata
 #' @export
-extract_pdf_metadata <- function(pdf_path, fields = DEFAULT_FIELDS) {
+extract_pdf_metadata <- function(pdf_path = NULL, fields = DEFAULT_FIELDS) {
+  # If no path provided, use file chooser
+  if (is.null(pdf_path)) {
+    pdf_path <- file.choose()
+  }
+
   # Validate PDF file
   validate_pdf_file(pdf_path)
 
@@ -183,7 +162,6 @@ extract_pdf_metadata <- function(pdf_path, fields = DEFAULT_FIELDS) {
   # Make API request using ellmer
   response <- tryCatch({
     # Create chat with GPT-5.1 using ellmer
-    # According to settings, GPT-5.1 uses Responses API with specific parameters
     chat <- chat_openai(
       model = OPENAI_MODEL,
       api_key = api_key,
@@ -191,21 +169,10 @@ extract_pdf_metadata <- function(pdf_path, fields = DEFAULT_FIELDS) {
     )
 
     # Upload PDF and send request
-    # ellmer supports file uploads via the turns() function with type = "file"
+    # Use content_pdf_file() to encode the PDF for chat input
     result <- chat$chat(
-      turns = list(
-        turn(
-          role = "user",
-          content = list(
-            content_file(pdf_path, type = "pdf"),
-            prompt
-          )
-        )
-      ),
-      max_tokens = API_MAX_TOKENS,
-      reasoning_effort = REASONING_EFFORT,
-      verbosity = VERBOSITY_LEVEL,
-      timeout = API_TIMEOUT_SECONDS
+      content_pdf_file(pdf_path),
+      prompt
     )
 
     result
