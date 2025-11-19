@@ -15,7 +15,6 @@ OPENAI_MODEL <- "gpt-5.1"  # Latest flagship model in GPT-5 family
 
 # GPT-5.1 specific parameters
 REASONING_EFFORT <- "none"  # Options: "none" (fastest), "low", "medium", "high"
-VERBOSITY_LEVEL <- "medium"  # Options: "low", "medium", "high"
 
 # API parameters
 API_MAX_TOKENS <- 1500  # Maximum tokens in response
