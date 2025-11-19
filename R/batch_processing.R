@@ -156,8 +156,8 @@ process_pdf_batch <- function(fields = DEFAULT_FIELDS,
       next
     }
 
-    # Extract with retry logic
-    extraction_result <- extract_with_retry(pdf_path, fields)
+    # Extract metadata (includes automatic retry logic)
+    extraction_result <- extract_pdf_metadata(pdf_path, fields)
 
     # Process result
     if (extraction_result$success) {

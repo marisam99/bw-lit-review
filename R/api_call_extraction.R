@@ -34,16 +34,18 @@ create_error_log_entry <- function(filename, error_message, attempt_number) {
 
 # Main Functions ---------------------------------------------------------------
 
-#' Extract metadata from a single PDF file
+#' Extract metadata from a single PDF file with automatic retry
 #'
 #' Main extraction function that orchestrates the entire process: validates file,
 #' loads API key, uploads PDF to OpenAI, sends extraction request, and returns
-#' parsed metadata.
+#' parsed metadata. Includes automatic retry logic with exponential backoff for
+#' transient failures (network timeouts, rate limits, temporary server errors).
 #' @param pdf_path Path to PDF file to process. If NULL, opens file chooser dialog.
 #' @param fields Character vector of metadata fields to extract (defaults to DEFAULT_FIELDS)
-#' @return Data frame with one row containing extracted metadata
+#' @param max_attempts Maximum number of retry attempts for transient failures (defaults to MAX_RETRY_ATTEMPTS)
+#' @return List with success status, result data frame (or NULL), and error log entries
 #' @export
-extract_pdf_metadata <- function(pdf_path = NULL, fields = DEFAULT_FIELDS) {
+extract_pdf_metadata <- function(pdf_path = NULL, fields = DEFAULT_FIELDS, max_attempts = MAX_RETRY_ATTEMPTS) {
   # If no path provided, use file chooser
   if (is.null(pdf_path)) {
     pdf_path <- file.choose()
@@ -60,61 +62,34 @@ extract_pdf_metadata <- function(pdf_path = NULL, fields = DEFAULT_FIELDS) {
 
   # Extract just the filename for display
   filename <- basename(pdf_path)
-
-  message(paste0("📄 Processing: ", filename))
-
-  # Make API request using ellmer
-  response <- tryCatch({
-    # Create chat with GPT-5.1 using ellmer
-    chat <- chat_openai(
-      model = OPENAI_MODEL,
-      api_key = api_key,
-      system_prompt = SYSTEM_PROMPT
-    )
-
-    # Upload PDF and send request
-    # Use content_pdf_file() to encode the PDF for chat input
-    result <- chat$chat(
-      content_pdf_file(pdf_path),
-      prompt
-    )
-
-    result
-  }, error = function(e) {
-    stop(paste0("❌ API request failed for ", filename, ": ", e$message))
-  })
-
-  # Parse response
-  metadata <- parse_extraction_response(response, expected_fields = fields)
-
-  # Add filename to results
-  metadata <- metadata |>
-    mutate(filename = filename, .before = 1)
-
-  message(paste0("✅ Completed: ", filename, "\n"))
-
-  return(metadata)
-}
-
-
-#' Extract metadata from single PDF with retry logic
-#'
-#' Wrapper around extract_pdf_metadata() that implements retry mechanism for
-#' transient failures (network timeouts, rate limits, temporary server errors).
-#' Useful for robust single-file or batch processing.
-#' @param pdf_path Path to PDF file
-#' @param fields Metadata fields to extract
-#' @param max_attempts Maximum number of retry attempts
-#' @return List with success status, result data frame (or NULL), and error log entries
-#' @export
-extract_with_retry <- function(pdf_path, fields = DEFAULT_FIELDS, max_attempts = MAX_RETRY_ATTEMPTS) {
-  filename <- basename(pdf_path)
   error_log <- list()
 
+  # Retry loop for transient failures
   for (attempt in 1:max_attempts) {
     result <- tryCatch({
-      # Attempt extraction
-      metadata <- extract_pdf_metadata(pdf_path, fields)
+      message(paste0("📄 Processing: ", filename))
+
+      # Make API request using ellmer
+      chat <- chat_openai(
+        model = OPENAI_MODEL,
+        api_key = api_key,
+        system_prompt = SYSTEM_PROMPT
+      )
+
+      # Upload PDF and send request
+      response <- chat$chat(
+        content_pdf_file(pdf_path),
+        prompt
+      )
+
+      # Parse response
+      metadata <- parse_extraction_response(response, expected_fields = fields)
+
+      # Add filename to results
+      metadata <- metadata |>
+        mutate(filename = filename, .before = 1)
+
+      message(paste0("✅ Completed: ", filename, "\n"))
 
       # Success!
       return(list(

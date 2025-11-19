@@ -145,10 +145,11 @@ Enable multi-file processing with robust error handling, retry logic, and progre
 - [x] Validate progress messages display correctly
 
 ### Completed Deliverables:
-- `/R/batch_processing.R` - Batch processing and error handling functions with:
-  - `process_pdf_batch()` - Main function with interactive file picker, progress tracking, and error handling
-  - `extract_with_retry()` - Retry logic with exponential backoff
-  - `create_error_log_entry()` - Structured error logging
+- `/R/api_call_extraction.R` - Enhanced with built-in retry logic:
+  - `extract_pdf_metadata()` - Now includes automatic retry with exponential backoff
+  - `create_error_log_entry()` - Structured error logging helper
+- `/R/batch_processing.R` - Batch orchestration functions:
+  - `process_pdf_batch()` - Main function with interactive file picker, progress tracking, and batch coordination
   - `display_progress()` - Real-time progress indicators
   - `generate_error_summary()` - Human-readable error reports
   - `save_error_log()` - Error log export to CSV
@@ -156,8 +157,10 @@ Enable multi-file processing with robust error handling, retry logic, and progre
 - Interactive file picker supporting single or multiple file selection
 
 ### Implementation Notes:
-- Retry mechanism uses exponential backoff (2^attempt * base_delay)
+- Retry mechanism built into `extract_pdf_metadata()` - always active
+- Uses exponential backoff (2^attempt * base_delay) for transient failures
 - Detects retryable errors (timeouts, rate limits, network issues) vs permanent failures
+- Max retry attempts configurable via MAX_RETRY_ATTEMPTS setting (default 3)
 - Progress tracking shows percentage complete, success/fail counts, and current file
 - Comprehensive final summary includes timing statistics and average time per file
 - Error logging captures all attempts, not just final failures
@@ -168,6 +171,7 @@ Enable multi-file processing with robust error handling, retry logic, and progre
 - Always opens file picker - user can select 1 or more files
 - Uses tcltk::tk_choose.files() for multi-file selection with fallback to repeated file.choose()
 - Simple single-function interface: `process_pdf_batch()` handles everything
+- Single extraction function works for both individual and batch use cases
 
 ---
 
