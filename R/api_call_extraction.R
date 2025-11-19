@@ -12,6 +12,26 @@ source(here("config/settings.R"))
 source(here("R/build_prompt.R"))
 source(here("R/process_response.R"))
 
+# Helper Functions -------------------------------------------------------------
+
+#' Create error log entry for failed extractions
+#'
+#' Generates a structured error record with timestamp, filename, error details,
+#' and retry attempt number.
+#' @param filename Name of the PDF file that failed
+#' @param error_message The error message from the failure
+#' @param attempt_number Which retry attempt this was (1-based)
+#' @return Named list with error details
+create_error_log_entry <- function(filename, error_message, attempt_number) {
+  list(
+    timestamp = format(Sys.time(), "%Y-%m-%d %H:%M:%S"),
+    filename = filename,
+    error_type = class(error_message)[1],
+    error_message = as.character(error_message),
+    attempt_number = attempt_number
+  )
+}
+
 # Main Functions ---------------------------------------------------------------
 
 #' Extract metadata from a single PDF file
@@ -74,4 +94,75 @@ extract_pdf_metadata <- function(pdf_path = NULL, fields = DEFAULT_FIELDS) {
   message(paste0("✅ Completed: ", filename, "\n"))
 
   return(metadata)
+}
+
+
+#' Extract metadata from single PDF with retry logic
+#'
+#' Wrapper around extract_pdf_metadata() that implements retry mechanism for
+#' transient failures (network timeouts, rate limits, temporary server errors).
+#' Useful for robust single-file or batch processing.
+#' @param pdf_path Path to PDF file
+#' @param fields Metadata fields to extract
+#' @param max_attempts Maximum number of retry attempts
+#' @return List with success status, result data frame (or NULL), and error log entries
+#' @export
+extract_with_retry <- function(pdf_path, fields = DEFAULT_FIELDS, max_attempts = MAX_RETRY_ATTEMPTS) {
+  filename <- basename(pdf_path)
+  error_log <- list()
+
+  for (attempt in 1:max_attempts) {
+    result <- tryCatch({
+      # Attempt extraction
+      metadata <- extract_pdf_metadata(pdf_path, fields)
+
+      # Success!
+      return(list(
+        success = TRUE,
+        data = metadata,
+        error_log = error_log
+      ))
+
+    }, error = function(e) {
+      # Log this attempt
+      error_entry <- create_error_log_entry(filename, e$message, attempt)
+      error_log <<- c(error_log, list(error_entry))
+
+      # Determine if we should retry
+      error_msg <- tolower(e$message)
+      is_retryable <- grepl("timeout|rate limit|network|connection|temporary|503|502|429", error_msg)
+
+      if (is_retryable && attempt < max_attempts) {
+        # Calculate exponential backoff delay
+        delay <- 2^(attempt - 1) * BATCH_DELAY_SECONDS
+        message(paste0("⚠️  Attempt ", attempt, "/", max_attempts, " failed. Retrying in ", delay, " seconds..."))
+        Sys.sleep(delay)
+        return(NULL)  # Continue to next iteration
+      } else {
+        # Non-retryable error or max attempts reached
+        if (attempt == max_attempts) {
+          message(paste0("❌ Failed after ", max_attempts, " attempts: ", filename))
+        } else {
+          message(paste0("❌ Non-retryable error: ", filename))
+        }
+        return(list(
+          success = FALSE,
+          data = NULL,
+          error_log = error_log
+        ))
+      }
+    })
+
+    # If we got a result (either success or final failure), return it
+    if (!is.null(result)) {
+      return(result)
+    }
+  }
+
+  # Should never reach here, but just in case
+  return(list(
+    success = FALSE,
+    data = NULL,
+    error_log = error_log
+  ))
 }
